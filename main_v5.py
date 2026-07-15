@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.scrapers.api_scrapers import RemotiveScraper, RemoteOKScraper, GetOnBoardScraper
 from src.filters.match_engine import MatchEngine
 from src.email.gmail_sender import GmailSender
+from src.ai.gemini_agent import GeminiAgent
 from src.memory.memory_store import MemoryStore
 
 CV_PATH = os.environ.get('CV_PATH', 'CV_Erick_Flores.pdf')
@@ -27,14 +28,18 @@ PROFILE = {
     'linkedin': 'linkedin.com/in/erick-flores-zambrano-69075b198',
 }
 
-def build_cover_letter(job: dict) -> str:
-    title = job.get('title', 'la posición')
-    company = job.get('company', 'su empresa')
-    return f"""Estimado equipo de Selección — {company},
+def build_cover_letter(job: dict, agent: GeminiAgent) -> str:
+    print(f"  [AI] Generando carta personalizada para {job.get('company')}...")
+    try:
+        return agent.generate_cover_letter(job)
+    except Exception as e:
+        print(f"  [AI-ERROR] Falló la generación, usando fallback: {e}")
+        # Fallback de emergencia si la API de IA falla
+        title = job.get('title', 'la posición')
+        company = job.get('company', 'su empresa')
+        return f"""Estimado equipo de Selección — {company},
 
-Me dirijo a ustedes con interés en el puesto de {title}. Cuento con experiencia en análisis de datos, Python, SQL y Power BI, complementada con formación simultánea en Economía (8.° sem.) e Ingeniería en IA/Datos (6.° sem.).
-
-He liderado equipos en retail y desarrollado proyectos de ML aplicados a negocios reales. Mi GitHub ({PROFILE['github']}) incluye proyectos en FastAPI, modelos LSTM y análisis econométrico.
+Me dirijo a ustedes con interés en el puesto de {title}. Cuento con experiencia en análisis de datos, Python, SQL y Power BI, complementada con formación en Economía e Ingeniería en IA/Datos.
 
 Adjunto mi CV. Quedo disponible para una entrevista.
 
@@ -62,6 +67,7 @@ def main():
     memory = MemoryStore()
     sender = GmailSender()
     engine = MatchEngine()
+    ai_agent = GeminiAgent()
 
     scrapers = [
         RemotiveScraper(),
@@ -101,7 +107,7 @@ def main():
 
         print(f"\n[APP] {job.get('title')} @ {job.get('company')} ({job.get('source')})")
 
-        body = build_cover_letter(job)
+        body = build_cover_letter(job, ai_agent)
         company_email = job.get('company_email', '')
 
         if company_email:

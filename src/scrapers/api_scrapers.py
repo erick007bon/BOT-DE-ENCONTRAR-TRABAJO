@@ -2,6 +2,7 @@
 Scrapers para APIs públicas de empleo: Remotive y RemoteOK
 """
 import requests
+import time
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (JobHunterBot/5.0)'}
 
@@ -12,8 +13,11 @@ class RemotiveScraper:
             r.raise_for_status()
             jobs = r.json().get('jobs', [])[:20]
             return [self._normalize(j) for j in jobs]
+        except requests.exceptions.RequestException as e:
+            print(f"[Remotive] Error de red: {e}")
+            return []
         except Exception as e:
-            print(f"[Remotive] Error: {e}")
+            print(f"[Remotive] Error inesperado: {e}")
             return []
 
     def _normalize(self, j):
@@ -40,8 +44,11 @@ class RemoteOKScraper:
                 items = data[1:] if len(data) > 1 else []
                 for j in items[:5]:
                     jobs.append(self._normalize(j))
+            except requests.exceptions.RequestException as e:
+                print(f"[RemoteOK:{tag}] Error de red: {e}")
             except Exception as e:
-                print(f"[RemoteOK:{tag}] Error: {e}")
+                print(f"[RemoteOK:{tag}] Error inesperado: {e}")
+            time.sleep(1.5) # Rate limiting para no ser baneados
         return jobs
 
     def _normalize(self, j):
@@ -66,8 +73,11 @@ class GetOnBoardScraper:
             r.raise_for_status()
             jobs = r.json().get('data', [])
             return [self._normalize(j) for j in jobs[:10]]
+        except requests.exceptions.RequestException as e:
+            print(f"[GetOnBoard] Error de red: {e}")
+            return []
         except Exception as e:
-            print(f"[GetOnBoard] Error: {e}")
+            print(f"[GetOnBoard] Error inesperado: {e}")
             return []
 
     def _normalize(self, j):
