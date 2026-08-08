@@ -1,9 +1,16 @@
 name: AI Job Hunter & Auto-Applier
 
+# ⚠️ DESACTIVADO A PROPOSITO (2026-08-05). Este repo y ai-job-hunter-bot
+# comparten historial (eran el mismo proyecto) pero se desincronizaron
+# desde 2026-07-15. Tener el `schedule:` activo aqui significaba correr
+# un bot independiente, con la version vieja V5 (sin extraccion de
+# emails real, sin los fixes de seguridad/PII aplicados el 2026-08-04/05),
+# en paralelo al de ai-job-hunter-bot sin que uno supiera del otro.
+# ai-job-hunter-bot es el repo activo/canonico. Este queda como espejo
+# de portafolio: se puede correr manualmente (workflow_dispatch) pero
+# no se dispara solo.
 on:
-  schedule:
-    - cron: '0 12 * * *' # Todos los días al mediodía UTC
-  workflow_dispatch: # Permite ejecución manual
+  workflow_dispatch: # Permite ejecución manual únicamente — sin `schedule:`
 
 jobs:
   run-bot:
@@ -31,8 +38,13 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main_v5.py || true
 
-      - name: Run Auto-Applier (Bajo el Agua)
-        env:
-          LINKEDIN_LI_AT: ${{ secrets.LINKEDIN_LI_AT }}
-          LINKEDIN_JSESSIONID: ${{ secrets.LINKEDIN_JSESSIONID }}
-        run: python run_applier.py || true
+      # Ver la nota equivalente en ai-job-hunter-bot/.github/workflows/job_hunter.yml:
+      # este paso fallaba en silencio por ModuleNotFoundError (src.auto_applier no
+      # existia en ese otro repo — irónicamente sí existe aquí). De todas formas
+      # se apaga por el mismo riesgo: automatizar LinkedIn Easy Apply con cookie
+      # de sesion inyectada desde un runner de GitHub Actions.
+      # - name: Run Auto-Applier (Bajo el Agua)
+      #   env:
+      #     LINKEDIN_LI_AT: ${{ secrets.LINKEDIN_LI_AT }}
+      #     LINKEDIN_JSESSIONID: ${{ secrets.LINKEDIN_JSESSIONID }}
+      #   run: python run_applier.py || true

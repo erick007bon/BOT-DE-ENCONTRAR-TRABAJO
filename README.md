@@ -1,5 +1,11 @@
 # 🤖 AI Job Hunter Agent — Autonomous Headhunting & Application Pipeline
 
+> ⚠️ **Este repo dejó de ser el activo el 2026-08-05.** Comparte historial con
+> [`ai-job-hunter-bot`](https://github.com/erick007bon/ai-job-hunter-bot), que
+> es donde vive el desarrollo real y donde están los fixes de seguridad más
+> recientes. Este se mantiene como espejo/portafolio, con su workflow en
+> modo manual únicamente (sin `schedule:`).
+
 ![Status](https://img.shields.io/badge/Status-Active%20(Production)-brightgreen)
 ![Python](https://img.shields.io/badge/Python-3.11+-blue)
 ![Architecture](https://img.shields.io/badge/Architecture-Autonomous%20AI%20Agent-purple)

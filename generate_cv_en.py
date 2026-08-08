@@ -53,7 +53,7 @@ def build_cv():
     story.append(Paragraph("ERICK REINALDO FLORES ZAMBRANO", name_style))
     story.append(Paragraph("Economist &amp; Data Scientist | AI Engineer | ML Engineer", title_style))
     story.append(Paragraph(
-        "📧 eflores4006@utm.edu.ec  |  📱 +593 963951193  |  📍 Machala, Ecuador (Remote Available)<br/>"
+        "📧 eflores4006@utm.edu.ec  |  📍 Machala, Ecuador (Remote Available)<br/>"
         "🔗 linkedin.com/in/erick-flores-zambrano-69075b198  |  💻 github.com/erick007bon",
         contact_style
     ))
